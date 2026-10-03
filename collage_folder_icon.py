@@ -418,10 +418,11 @@ function run(argv) {
   var img = argv[0] === "" ? null : $.NSImage.alloc.initWithContentsOfFile(argv[0]);
   if (argv[0] !== "" && (!img || img.isNil())) return "false";
   var ws = $.NSWorkspace.sharedWorkspace;
-  // Finder caches custom icons: clear the old one first so the new one is picked up right away
-  if (argv[0] !== "") ws.setIconForFileOptions(null, argv[1], 0);
+  // Finder caches custom icons: clear the old one first so the new one is picked up right away.
+  // Refresh steps are best-effort only; they must never stop the icon itself from being set.
+  if (argv[0] !== "") { try { ws.setIconForFileOptions(null, argv[1], 0); } catch (e) {} }
   var ok = ws.setIconForFileOptions(img, argv[1], 0);
-  ws.noteFileSystemChanged(argv[1]);        // tell Finder to redraw this folder now
+  try { ws.noteFileSystemChanged(argv[1]); } catch (e) {}   // ask Finder to redraw now
   return ok ? "true" : "false";
 }
 """
