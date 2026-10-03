@@ -417,7 +417,12 @@ ObjC.import("AppKit");
 function run(argv) {
   var img = argv[0] === "" ? null : $.NSImage.alloc.initWithContentsOfFile(argv[0]);
   if (argv[0] !== "" && (!img || img.isNil())) return "false";
-  return $.NSWorkspace.sharedWorkspace.setIconForFileOptions(img, argv[1], 0) ? "true" : "false";
+  var ws = $.NSWorkspace.sharedWorkspace;
+  // Finder caches custom icons: clear the old one first so the new one is picked up right away
+  if (argv[0] !== "") ws.setIconForFileOptions(null, argv[1], 0);
+  var ok = ws.setIconForFileOptions(img, argv[1], 0);
+  ws.noteFileSystemChanged(argv[1]);        // tell Finder to redraw this folder now
+  return ok ? "true" : "false";
 }
 """
 
@@ -440,7 +445,13 @@ def _jxa(script, *args):
 
 def set_folder_icon(png, folder):
     r = _jxa(_SET_ICON_JS, png, folder)
-    return bool(r) and r.returncode == 0 and r.stdout.strip() == "true"
+    ok = bool(r) and r.returncode == 0 and r.stdout.strip() == "true"
+    if ok:
+        try:
+            os.utime(folder)                   # bump the modified time, another cue for Finder to refresh
+        except OSError:
+            pass
+    return ok
 
 
 def reset_folder_icon(folder):
