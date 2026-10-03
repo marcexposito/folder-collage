@@ -447,6 +447,8 @@ def _jxa(script, *args):
 def set_folder_icon(png, folder):
     r = _jxa(_SET_ICON_JS, png, folder)
     ok = bool(r) and r.returncode == 0 and r.stdout.strip() == "true"
+    if not ok and r is not None:                 # details for anyone running it in Terminal
+        print("macOS said:", (r.stderr or r.stdout).strip() or "(no details)", file=sys.stderr)
     if ok:
         try:
             os.utime(folder)                   # bump the modified time, another cue for Finder to refresh
