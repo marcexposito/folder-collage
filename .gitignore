@@ -1,0 +1,9 @@
+.DS_Store
+Icon
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.png
+!docs/*.png
+!assets/*.png
