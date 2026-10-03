@@ -43,6 +43,7 @@ warnings.simplefilter("error", Image.DecompressionBombWarning)   # treat suspici
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".heic", ".heif", ".webp", ".tif", ".tiff", ".bmp", ".gif"}
 DOC_EXTS = {".pdf", ".doc", ".docx", ".pages", ".key", ".ppt", ".pptx", ".numbers", ".xls", ".xlsx",
             ".txt", ".rtf", ".md", ".mov", ".mp4", ".m4v", ".psd", ".ai", ".sketch", ".epub"}
+VERSION = "1.0.3"
 MAX_PIECES = 14
 S = 1024                          # icon canvas (macOS uses up to 1024x1024)
 TAB = (90, 168, 430, 262)         # folder tab
@@ -417,13 +418,7 @@ ObjC.import("AppKit");
 function run(argv) {
   var img = argv[0] === "" ? null : $.NSImage.alloc.initWithContentsOfFile(argv[0]);
   if (argv[0] !== "" && (!img || img.isNil())) return "false";
-  var ws = $.NSWorkspace.sharedWorkspace;
-  // Finder caches custom icons: clear the old one first so the new one is picked up right away.
-  // Refresh steps are best-effort only; they must never stop the icon itself from being set.
-  if (argv[0] !== "") { try { ws.setIconForFileOptions(null, argv[1], 0); } catch (e) {} }
-  var ok = ws.setIconForFileOptions(img, argv[1], 0);
-  try { ws.noteFileSystemChanged(argv[1]); } catch (e) {}   // ask Finder to redraw now
-  return ok ? "true" : "false";
+  return $.NSWorkspace.sharedWorkspace.setIconForFileOptions(img, argv[1], 0) ? "true" : "false";
 }
 """
 
@@ -451,7 +446,7 @@ def set_folder_icon(png, folder):
         print("macOS said:", (r.stderr or r.stdout).strip() or "(no details)", file=sys.stderr)
     if ok:
         try:
-            os.utime(folder)                   # bump the modified time, another cue for Finder to refresh
+            os.utime(folder)                   # bump the modified time so Finder redraws the icon
         except OSError:
             pass
     return ok
@@ -495,7 +490,8 @@ def explain_empty(name):
 
 def main():
     ap = argparse.ArgumentParser(description="Make a folder's icon a collage of what's inside.")
-    ap.add_argument("folders", nargs="+")
+    ap.add_argument("folders", nargs="*")
+    ap.add_argument("--version", action="version", version=f"Folder Collage {VERSION}")
     ap.add_argument("--seed", type=int, default=None, help="fixed seed for a repeatable collage (default: new each run)")
     ap.add_argument("--no-title", action="store_true", help="don't spell the folder name in cut-out letters")
     ap.add_argument("--no-subfolders", action="store_true", help="only use photos directly inside the folder")
@@ -505,6 +501,8 @@ def main():
     ap.add_argument("--reset", action="store_true", help="restore the default folder icon")
     ap.add_argument("--notify", action="store_true", help="show a macOS notification with the result")
     a = ap.parse_args()
+    if not a.folders:
+        ap.error("give at least one folder")
     try:
         tint = tuple(max(0, min(255, int(x))) for x in a.tint.split(","))
         assert len(tint) == 3

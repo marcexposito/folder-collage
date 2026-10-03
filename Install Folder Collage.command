@@ -184,6 +184,7 @@ if [[ -z "$FC_SKIP_DEPS" ]]; then
 fi
 
 echo
+[[ -z "$FC_SKIP_DEPS" ]] && "$APP/venv/bin/python" "$APP/collage_folder_icon.py" --version
 echo "✅ Done! In Finder, right-click any folder → Quick Actions → Collage it."
 echo "   (It may also appear at the bottom of the menu, under Services.)"
 echo
