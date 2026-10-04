@@ -1,8 +1,8 @@
-# 📁 Folder Collage
+# 🪄 📁 Folder Collage
 
-**Turn any Mac folder's icon into a scrapbook collage of the photos inside it** — like the photo-covered binders and folders we all made in the 2000s.
+**Remember the 2000s school folders? Turn any Mac folder's icon into a scrapbook collage of the photos inside it**
 
-Right-click a folder → **Collage it**. That's it.
+Install macOS action  → right-click on your photos folder → **Collage it**. That's it.
 
 ![Three folder icons made with Folder Collage](docs/preview.png)
 
@@ -24,7 +24,7 @@ Right-click a folder → **Collage it**. That's it.
 1. **Download** this repository: green **Code** button → **Download ZIP**, then unzip it.
 2. **Double-click `Install Folder Collage.command`.**
 
-   macOS will warn that it *"could not verify … is free of malware"*. This happens for every script that isn't signed with a paid Apple developer certificate. You can [read the installer](Install%20Folder%20Collage.command) first — it's short. To continue, pick one:
+  ⚠️ macOS will warn that it *"could not verify … is free of malware"*. This happens for every script that isn't signed with a paid Apple developer certificate. You can [read the installer](Install%20Folder%20Collage.command) first — it's short. To continue, pick one:
 
    - **Option A:** click **Done**, open **System Settings → Privacy & Security**, scroll to the bottom and click **Open Anyway** next to the installer, then double-click it again.
    - **Option B:** open **Terminal**, type `bash ` (with a space), drag the installer into the window and press **Return**.
