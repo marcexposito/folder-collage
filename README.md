@@ -1,6 +1,6 @@
 # 🪄 📁 Folder Collage
 
-**Remember the 2000s school folders? Turn any Mac folder's icon into a scrapbook collage of the photos inside it**
+**Remember the 2000s school folders? You can now turn any Mac folder's icon into a scrapbook collage of the photos inside it.**
 
 Install macOS action  → right-click on your photos folder → **Collage it**. That's it.
 
